@@ -1,0 +1,3 @@
+[submodule "compute-hdc"]
+    path = matlab/compute-hdc
+    url = https://github.com/ahaselsteiner/compute-hdc.git
