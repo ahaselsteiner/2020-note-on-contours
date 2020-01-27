@@ -72,6 +72,16 @@ ylabel('Marginal exceedance prob. for h_{s,HDC}, p_M (-)');
 
 subplot(3, 2, 4)
 hold on
+plot(alphas, alphas ./ pMarginal, '--k');
+plot(alphas, alphas ./ pMarginal, 'ok');
+set(gca, 'XDir', 'reverse');
+set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xscale', 'log')
+xlabel('\alpha (-)');
+ylabel('\alpha_{HDC} / p_{M} (-)');
+
+subplot(3, 2, 5)
+hold on
 plot(alphas, hsAlpha, '--k');
 plot(alphas, hsAlpha, 'ok');
 set(gca, 'XDir', 'reverse');
@@ -81,7 +91,7 @@ ylim([0  22]);
 xlabel('\alpha (-)');
 ylabel('h_{s,M} (-)');
 
-subplot(3, 2, 5)
+subplot(3, 2, 6)
 hold on
 plot(alphas, maxHs ./ hsAlpha, '--k');
 plot(alphas, maxHs ./ hsAlpha, 'ok');
@@ -91,15 +101,7 @@ set(gca, 'xscale', 'log')
 xlabel('\alpha (-)');
 ylabel('h_{s,HDC} / h_{s,M}(-)');
 
-subplot(3, 2, 6)
-hold on
-plot(alphas, alphas ./ pMarginal, '--k');
-plot(alphas, alphas ./ pMarginal, 'ok');
-set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
-set(gca, 'xscale', 'log')
-xlabel('\alpha (-)');
-ylabel('\alpha_{HDC} / \alpha_{M} (-)');
+
 
 betas =  [1.1, 1.471, 2 3 4];
 betaMarkers = {'-rs', '-bo', '-k^', '-m+', '-g*', '-cd'};
@@ -174,7 +176,7 @@ set(gca, 'xtick', flip(alphas(2:end)));
 set(gca, 'xscale', 'log')
 ylim([1 15])
 xlabel('\alpha (-)');
-ylabel('\alpha_{HDC} / \alpha_{M} (-)');
+ylabel('\alpha_{HDC} / p_{M} (-)');
 legendCell = cellstr(num2str(betas', 'beta = %2.3f'));
 lgd = legend(legendCell, 'location', 'northwest', 'orientation', 'vertical');
 lgd.NumColumns = 2;
