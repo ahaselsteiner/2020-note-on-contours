@@ -1,4 +1,7 @@
-
+% Definition of the grid cell size. In the study we used DELTA_HS = 
+% DELTA_TZ = 0.005. However, for faster calculations, use e.g. 0.1.
+DELTA_HS = 0.005;
+DELTA_TZ = 0.005;
 
 % Define a joint probability distribution (taken from Vanem and Bitner-
 % Gregersen, 2012):
@@ -12,10 +15,14 @@ PM.coeffs = {{2.776 1.471 0.8888};
                             };
 PM(1).labels = {'Significant wave height, h_s (m)';
                                 'Zero-up-crossing period, t_z (s)'};
-PM.gridCenterPoints = {0:0.05:24; 0:0.05:18};
+PM.gridCenterPoints = {0.8888 - DELTA_HS / 2 : DELTA_HS : 50; 0 : DELTA_TZ : 30};
 
 % Define the exceedance probabilities.
-alphas = [0.5 0.1 0.01 0.001 0.0001 0.00001 0.000001 0.0000001]';
+alphas = [0.5 0.2 0.1 0.05 0.02 0.01 0.005 0.002 0.001 0.0005 0.0002 ...
+    0.0001 0.00005 0.00002 0.00001 0.000005 0.000002 0.000001 ...
+    0.0000005 0.0000002 0.0000001]';
+doPlotContourAlphas = [0.5 0.1 0.01 0.001 0.0001 0.00001 0.000001 0.0000001]';
+alphaTicks = [0.1 0.01 0.001 0.0001 0.00001 0.000001 0.0000001]';
 
 figShapeIs1p471 = figure();
 subplot(3, 2, 1);
@@ -36,13 +43,16 @@ for i = 1 : length(alphas)
     maxHs(i) = max(x1Hdc{1});
     pMarginal(i) = 1 - cdf('weibull', maxHs(i) - 0.8888, 2.776, 1.471);
     hsAlpha(i) = icdf('weibull', 1 - alphas(i), 2.776, 1.471) + 0.8888;
-    plot(C2{i}, C1{i});
+    
+    if sum(alphas(i) == doPlotContourAlphas)
+        plot(C2{i}, C1{i});
+    end
 end
 ylim([0  22]);
 xlim([0 18]);
 xlabel(PM(1).labels{2})
 ylabel(PM(1).labels{1})
-legendCell = cellstr(num2str(alphas, '%1.0e'));
+legendCell = cellstr(num2str(doPlotContourAlphas, '%1.0e'));
 lgd = legend(legendCell, 'location', 'northwest');
 lgd.Title.String = '\alpha-values';
 legend box off
@@ -52,8 +62,9 @@ hold on
 plot(alphas, maxHs, '--k');
 plot(alphas, maxHs, 'ok');
 set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
+set(gca,'XminorTick','off')
 ylim([0  22]);
 xlabel('\alpha (-)');
 ylabel('Max. h_s-value along the contour, h_{s,HDC} (m)');
@@ -63,20 +74,23 @@ hold on
 plot(alphas, pMarginal, '--k');
 plot(alphas, pMarginal, 'ok');
 set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
+set(gca,'XminorTick','off')
 set(gca, 'YDir', 'reverse');
 set(gca, 'yscale', 'log');
+set(gca,'YminorTick','off')
 xlabel('\alpha (-)');
 ylabel('Marginal exceedance prob. for h_{s,HDC}, p_M (-)');
 
 subplot(3, 2, 4)
 hold on
-plot(alphas, alphas ./ pMarginal, '--k');
+ax = plot(alphas, alphas ./ pMarginal, '--k');
 plot(alphas, alphas ./ pMarginal, 'ok');
 set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
+set(gca,'XminorTick','off')
 xlabel('\alpha (-)');
 ylabel('\alpha_{HDC} / p_{M} (-)');
 
@@ -85,8 +99,9 @@ hold on
 plot(alphas, hsAlpha, '--k');
 plot(alphas, hsAlpha, 'ok');
 set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
+set(gca,'XminorTick','off')
 ylim([0  22]);
 xlabel('\alpha (-)');
 ylabel('h_{s,M} (-)');
@@ -96,14 +111,14 @@ hold on
 plot(alphas, maxHs ./ hsAlpha, '--k');
 plot(alphas, maxHs ./ hsAlpha, 'ok');
 set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
+set(gca,'XminorTick','off')
 xlabel('\alpha (-)');
 ylabel('h_{s,HDC} / h_{s,M}(-)');
 
 
-
-betas =  [1.1, 1.471, 2 3 4];
+betas =  [1, 1.471, 2 3 4];
 betaMarkers = {'-rs', '-bo', '-k^', '-m+', '-g*', '-cd'};
 C1 = cell(length(betas), length(alphas));
 C2 = cell(length(betas), length(alphas));
@@ -125,7 +140,7 @@ for i = 1:length(betas)
                                 };
     PM(1).labels = {'Significant wave height, h_s (m)';
                                     'Zero-up-crossing period, t_z (s)'};
-    PM.gridCenterPoints = {0:0.05:40; 0:0.05:30};
+    PM.gridCenterPoints = {0.8888 - DELTA_HS / 2 : DELTA_HS : 50; 0 : DELTA_TZ : 30};
     for j = 1 : length(alphas)
         % Calculate the highest density contour.
         [fm, x1Hdc, x2Hdc] = computeHdc(PM, alphas(j), PM.gridCenterPoints, 0);
@@ -150,6 +165,7 @@ ylabel(PM(1).labels{1})
 legendCell = cellstr(num2str(betas', 'beta = %2.3f'));
 legend(legendCell, 'location', 'northwest', 'orientation', 'vertical')
 legend box off
+ylim([0 31])
 
 
 subplot(1, 3, 2)
@@ -158,8 +174,9 @@ for i = 1:length(betas)
     plot(alphas', maxHs(i, :) ./ hsAlpha(i, :), betaMarkers{i});
 end
 set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
+set(gca,'XminorTick','off')
 xlabel('\alpha (-)');
 ylabel('h_{s,HDC} / h_{s,M} (-)');
 legendCell = cellstr(num2str(betas', 'beta = %2.3f'));
@@ -172,9 +189,10 @@ for i = 1:length(betas)
     plot(alphas', alphas' ./ pMarginal(i, :), betaMarkers{i});
 end
 set(gca, 'XDir', 'reverse');
-set(gca, 'xtick', flip(alphas(2:end)));
+set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
-ylim([1 15])
+set(gca,'XminorTick','off')
+ylim([1 18])
 xlabel('\alpha (-)');
 ylabel('\alpha_{HDC} / p_{M} (-)');
 legendCell = cellstr(num2str(betas', 'beta = %2.3f'));
