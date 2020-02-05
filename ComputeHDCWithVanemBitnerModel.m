@@ -1,7 +1,7 @@
 % Definition of the grid cell size. In the study we used DELTA_HS = 
 % DELTA_TZ = 0.005. However, for faster calculations, use e.g. 0.1.
-DELTA_HS = 0.005;
-DELTA_TZ = 0.005;
+DELTA_HS = 0.5;
+DELTA_TZ = 0.5;
 
 % Define a joint probability distribution (taken from Vanem and Bitner-
 % Gregersen, 2012):
@@ -81,7 +81,7 @@ set(gca, 'YDir', 'reverse');
 set(gca, 'yscale', 'log');
 set(gca,'YminorTick','off')
 xlabel('\alpha_c (-)');
-ylabel('Q(c_{\alpha})(-)');
+ylabel('Q(c_{\alpha}) (-)');
 
 subplot(3, 2, 4)
 hold on
@@ -115,7 +115,7 @@ set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
 set(gca,'XminorTick','off')
 xlabel('\alpha (-)');
-ylabel('c_{\alpha} / x_{\alpha}(-)');
+ylabel('c_{\alpha} / x_{\alpha} (-)');
 
 
 betas =  [1, 1.471, 2 3 4];
@@ -164,7 +164,7 @@ xlabel(PM(1).labels{2})
 ylabel(PM(1).labels{1})
 legendCell = cellstr(num2str(betas', '%2.3f'));
 lgd = legend(legendCell, 'location', 'northwest', 'orientation', 'vertical');
-lgd.Title.String = '\beta-values';
+lgd.Title.String = 'k-values';
 legend box off
 xlim([0 20])
 ylim([0 31])
@@ -183,7 +183,7 @@ xlabel('\alpha (-)');
 ylabel('c_{\alpha} / x_{\alpha} (-)');
 legendCell = cellstr(num2str(betas', '%2.3f'));
 lgd = legend(legendCell, 'location', 'northeast', 'orientation', 'vertical');
-lgd.Title.String = '\beta-values';
+lgd.Title.String = 'k-values';
 legend box off
 ylim([1 1.6])
 
@@ -201,5 +201,5 @@ xlabel('\alpha_c (-)');
 ylabel('\alpha_{c} / Q(c_{\alpha}) (-)');
 legendCell = cellstr(num2str(betas', ' %2.3f'));
 lgd = legend(legendCell, 'location', 'northwest', 'orientation', 'vertical');
-lgd.Title.String = '\beta-values';
+lgd.Title.String = 'k-values';
 legend box off
