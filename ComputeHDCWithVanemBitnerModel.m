@@ -66,8 +66,8 @@ set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
 set(gca,'XminorTick','off')
 ylim([0  22]);
-xlabel('\alpha (-)');
-ylabel('Max. h_s-value along the contour, h_{s,HDC} (m)');
+xlabel('\alpha_c (-)');
+ylabel('c_{\alpha} (m)');
 
 subplot(3, 2, 3);
 hold on
@@ -80,8 +80,8 @@ set(gca,'XminorTick','off')
 set(gca, 'YDir', 'reverse');
 set(gca, 'yscale', 'log');
 set(gca,'YminorTick','off')
-xlabel('\alpha (-)');
-ylabel('Marginal exceedance prob. for h_{s,HDC}, p_M (-)');
+xlabel('\alpha_c (-)');
+ylabel('Q(c_{\alpha})(-)');
 
 subplot(3, 2, 4)
 hold on
@@ -91,8 +91,8 @@ set(gca, 'XDir', 'reverse');
 set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
 set(gca,'XminorTick','off')
-xlabel('\alpha (-)');
-ylabel('\alpha_{HDC} / p_{M} (-)');
+xlabel('\alpha_c (-)');
+ylabel('\alpha_c / Q(c_{\alpha}) (-)');
 
 subplot(3, 2, 5)
 hold on
@@ -104,7 +104,7 @@ set(gca, 'xscale', 'log')
 set(gca,'XminorTick','off')
 ylim([0  22]);
 xlabel('\alpha (-)');
-ylabel('h_{s,M} (-)');
+ylabel('x_{\alpha} (-)');
 
 subplot(3, 2, 6)
 hold on
@@ -115,7 +115,7 @@ set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
 set(gca,'XminorTick','off')
 xlabel('\alpha (-)');
-ylabel('h_{s,HDC} / h_{s,M}(-)');
+ylabel('c_{\alpha} / x_{\alpha}(-)');
 
 
 betas =  [1, 1.471, 2 3 4];
@@ -162,9 +162,11 @@ for i = 1:length(betas)
 end
 xlabel(PM(1).labels{2})
 ylabel(PM(1).labels{1})
-legendCell = cellstr(num2str(betas', 'beta = %2.3f'));
-legend(legendCell, 'location', 'northwest', 'orientation', 'vertical')
+legendCell = cellstr(num2str(betas', '%2.3f'));
+lgd = legend(legendCell, 'location', 'northwest', 'orientation', 'vertical');
+lgd.Title.String = '\beta-values';
 legend box off
+xlim([0 20])
 ylim([0 31])
 
 
@@ -178,10 +180,12 @@ set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
 set(gca,'XminorTick','off')
 xlabel('\alpha (-)');
-ylabel('h_{s,HDC} / h_{s,M} (-)');
-legendCell = cellstr(num2str(betas', 'beta = %2.3f'));
-legend(legendCell, 'location', 'northeast', 'orientation', 'vertical')
+ylabel('c_{\alpha} / x_{\alpha} (-)');
+legendCell = cellstr(num2str(betas', '%2.3f'));
+lgd = legend(legendCell, 'location', 'northeast', 'orientation', 'vertical');
+lgd.Title.String = '\beta-values';
 legend box off
+ylim([1 1.6])
 
 subplot(1, 3, 3)
 hold on
@@ -192,10 +196,10 @@ set(gca, 'XDir', 'reverse');
 set(gca, 'xtick', flip(alphaTicks));
 set(gca, 'xscale', 'log')
 set(gca,'XminorTick','off')
-ylim([1 18])
-xlabel('\alpha (-)');
-ylabel('\alpha_{HDC} / p_{M} (-)');
-legendCell = cellstr(num2str(betas', 'beta = %2.3f'));
+ylim([0 18])
+xlabel('\alpha_c (-)');
+ylabel('\alpha_{c} / Q(c_{\alpha}) (-)');
+legendCell = cellstr(num2str(betas', ' %2.3f'));
 lgd = legend(legendCell, 'location', 'northwest', 'orientation', 'vertical');
-lgd.NumColumns = 2;
+lgd.Title.String = '\beta-values';
 legend box off
