@@ -1,7 +1,7 @@
 % Definition of the grid cell size. In the study we used DELTA_HS = 
 % DELTA_TZ = 0.005. However, for faster calculations, use e.g. 0.1.
-DELTA_HS = 0.5;
-DELTA_TZ = 0.5;
+DELTA_HS = 0.005;
+DELTA_TZ = 0.005;
 
 % Define a joint probability distribution (taken from Vanem and Bitner-
 % Gregersen, 2012):
@@ -118,7 +118,7 @@ xlabel('\alpha (-)');
 ylabel('c_{\alpha} / x_{\alpha} (-)');
 
 
-betas =  [1, 1.471, 2 3 4];
+betas =  [1, 1.471, 2 3];
 betaMarkers = {'-rs', '-bo', '-k^', '-m+', '-g*', '-cd'};
 C1 = cell(length(betas), length(alphas));
 C2 = cell(length(betas), length(alphas));
@@ -155,7 +155,8 @@ end
 figDifferentShapeValues = figure();
 subplot(1, 3, 1)
 hold on
-j = 5; %10^-6
+j = find(alphas == 10^(-5));
+j = 15;
 for i = 1:length(betas)
     betaMarker = betaMarkers{i};
     plot(C2{i, j}, C1{i, j}, betaMarker(1:2));
@@ -166,8 +167,8 @@ legendCell = cellstr(num2str(betas', '%2.3f'));
 lgd = legend(legendCell, 'location', 'northwest', 'orientation', 'vertical');
 lgd.Title.String = 'k-values';
 legend box off
-xlim([0 20])
-ylim([0 31])
+xlim([0 23])
+ylim([0 40])
 
 
 subplot(1, 3, 2)
