@@ -1,7 +1,7 @@
 % Definition of the grid cell size. In the study we used DELTA_HS = 
 % DELTA_TZ = 0.005. However, for faster calculations, use e.g. 0.1.
-DELTA_HS = 0.005;
-DELTA_TZ = 0.005;
+DELTA_HS = 0.1;
+DELTA_TZ = 0.1;
 
 MARKER_SIZE = 4;
 
@@ -157,8 +157,7 @@ end
 figDifferentShapeValues = figure();
 subplot(1, 3, 1)
 hold on
-j = find(alphas == 10^(-5));
-j = 15;
+j = find(alphas < 1.01*10^(-5), 1); % because somehow alpha == 10^(-5) does not work.
 for i = 1:length(betas)
     betaMarker = betaMarkers{i};
     plot(C2{i, j}, C1{i, j}, betaMarker(1:2));
