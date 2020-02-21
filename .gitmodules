@@ -1,3 +1,6 @@
 [submodule "compute-hdc"]
-    path = matlab/compute-hdc
+    path = compute-hdc
     url = https://github.com/ahaselsteiner/compute-hdc.git
+[submodule "translated-weibull"]
+    path = translated-weibull
+    url = https://github.com/ahaselsteiner/translated-weibull.git
