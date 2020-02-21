@@ -1,5 +1,5 @@
-function [h,t] = WblLogN_simulate(N, alpha, beta, gamma, ...
-    tztpCoeff, a1, a2, a3, b1, b2, b3)
+function [hs, tz] = WblLogN_simulate(N, alpha, beta, gamma, ...
+    a1, a2, a3, b1, b2, b3)
     if ~exist('alpha', 'var')
         % Hs Weibull parameters.
         alpha = 2.776;
@@ -7,7 +7,6 @@ function [h,t] = WblLogN_simulate(N, alpha, beta, gamma, ...
         gamma = 0.8888;
 
         % Tp conditional parameters.
-        tztpCoeff = 1.2796;
         a1 = 0.100;
         a2 = 1.489;
         a3 = 0.190;
@@ -16,10 +15,10 @@ function [h,t] = WblLogN_simulate(N, alpha, beta, gamma, ...
         b3 = -0.224;
     end
 
-    h = wblrnd(alpha, beta, N, 1) + gamma;
+    hs = wblrnd(alpha, beta, N, 1) + gamma;
 
-    mu = a1 + a2 * h.^a3;
-    sigma = tztpCoeff * (b1 + b2 * exp(b3 * h));
+    mu = a1 + a2 * hs.^a3;
+    sigma = b1 + b2 * exp(b3 * hs);
 
-    t = lognrnd(mu, sigma, N, 1);
+    tz = lognrnd(mu, sigma, N, 1);
 end
