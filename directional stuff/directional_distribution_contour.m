@@ -19,7 +19,7 @@ dy=y(2)-y(1);
 % calculate density and check integral
 fxy=directional_distribution_density_cartesian(X,Y);
 fxy(X==0&Y==0)=0;
-sum(fxy(:))*dx*dy-1 % error in numerical integration
+sum(fxy(:))*dx*dy-1 % error in numerical integration0
 
 % simulate random points for DS contour
 N=1e6;
@@ -28,7 +28,7 @@ xr=Hs.*cos(theta);
 yr=Hs.*sin(theta);
 
 % calculate contours
-alpha=1e-4;
+alpha = 1 / (1 * 365.25 * 24/3);
 P=1-alpha;
 [xcont_IF,ycont_IF]=count2iform(x,y,fxy,P);
 [xcont_IS,ycont_IS]=count2isorm(x,y,fxy,P);
@@ -109,10 +109,11 @@ hs = sqrt(rcx.^2 + rcy.^2);
 waveAngle = atan2d(rcy, rcx);
 h(5) = polarplot(deg2rad([waveAngle; waveAngle(1)]), [hs; hs(1)], '-r', 'linewidth', 2);
 
-h(6) = polarplot(thetaMaxResponseIF, HsMaxResponseIF, '+k');
-h(7) = polarplot(thetaMaxResponseIS, HsMaxResponseIS, '+k');
-h(8) = polarplot(thetaMaxResponseDS, HsMaxResponseDS, '+k');
-h(9) = polarplot(thetaMaxResponseHD, HsMaxResponseHD, '+k');
+cross_line_width = 1.5;
+h(6) = polarplot(thetaMaxResponseIF, HsMaxResponseIF, '+k', 'linewidth', cross_line_width);
+h(7) = polarplot(thetaMaxResponseIS, HsMaxResponseIS, '+k', 'linewidth', cross_line_width);
+h(8) = polarplot(thetaMaxResponseDS, HsMaxResponseDS, '+k', 'linewidth', cross_line_width);
+h(9) = polarplot(thetaMaxResponseHD, HsMaxResponseHD, '+k', 'linewidth', cross_line_width);
 
 title('$H_s$ [m] vs. $\theta$ [deg]')
 ax=gca;
