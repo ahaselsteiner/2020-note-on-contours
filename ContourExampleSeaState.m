@@ -6,7 +6,7 @@ PM.modelType = 'CMA';
 PM.distributions = {'weibull'; 'lognormal'};
 PM.isConditionals = {[0 0 0]; [1 1]};
 PM.coeffs = {{2.776 1.471 0.8888}; 
-                             { @(x1)0.1000 + 1.489 * x1^0.1901;
+                             { @(x1)0.1000 + 1.489 * x1.^0.1901;
                                @(x1)0.0400 + 0.1748 * exp(-0.2243*x1)}
                             };
 PM.labels = {'Significant wave height (m)';
@@ -23,9 +23,12 @@ alpha = 1 / (nYears * 365.25 * 24 / stateDuration);
 % Compute the contours.
 [hsIFORM, tzIFORM] = computeIformContour(PM, alpha, 360); 
 tpIFORM = tztpCoeff * tzIFORM;
-[h, t] = WblLogN_simulate(1 / alpha * 200);
-[hsAE, tzAE] = direct_sampling_contour(h, t, alpha, 5);
-tpAE = tztpCoeff * tzAE;
+[hsDS tzDS] = computeDsContour(PM, 1 / alpha * 200, alpha, 5);
+
+%[h, t] = WblLogN_simulate(1 / alpha * 200);
+%[hsDS, tzDS] = direct_sampling_contour(h, t, alpha, 5);
+tpDS = tztpCoeff * tzDS;
+
 [hsISORM, tzISORM] = computeIsormContour(PM, alpha, 360); 
 tpISORM = tztpCoeff * tzISORM;
 [fm, hsHD, tzHD] = computeHdc(PM, alpha, PM.gridCenterPoints, 0);
@@ -45,7 +48,7 @@ tic
 
 % Compute the failure surface.
 tpFailureSurface = [0 : 0.5 : 20];
-hsFailureSurface = hsToReachRoss2020Response(tpFailureSurface, 19);
+hsFailureSurface = hsToReachRoss2020Response(tpFailureSurface, 15);
 
 figFourContours = figure('position', [100 100 500 450]);
 hold on
@@ -57,10 +60,10 @@ responseIFORM = ross2020Response(hsIFORM, tpIFORM);
 h(2) = plot(tpIFORM(iMaxIFORM), hsIFORM(iMaxIFORM), 'xb', 'linewidth', 2);
 
 % AE
-h(3) = plot([tpAE; tpAE(1)], [hsAE; hsAE(1)], '-k');
-responseAE = ross2020Response(hsAE, tpAE);
-[maxResponseAE, iMaxAE] = max(responseAE);
-h(4) = plot(tpAE(iMaxAE), hsAE(iMaxAE), 'xk', 'linewidth', 2);
+h(3) = plot([tpDS; tpDS(1)], [hsDS; hsDS(1)], '-k');
+responseDS = ross2020Response(hsDS, tpDS);
+[maxResponseDS, iMaxDS] = max(responseDS);
+h(4) = plot(tpDS(iMaxDS), hsDS(iMaxDS), 'xk', 'linewidth', 2);
 
 % ISORM
 h(5) = plot([tpISORM tpISORM(1)], [hsISORM hsISORM(1)], '--b');
@@ -88,29 +91,29 @@ box off
 
 
 
-contourName = {'IFORM'; 'Angular exceedance'; 'ISORM'; 'Highest density'; 'All sea state'};
-maxResponse = [maxResponseIFORM; maxResponseAE; maxResponseISORM; maxResponseHD; allSeaStateResponse];
-maxResponseHs = [hsIFORM(iMaxIFORM); hsAE(iMaxAE); hsISORM(iMaxISORM); hsHD(iMaxHD); NaN];
-maxResponseTp = [tpIFORM(iMaxIFORM); tpAE(iMaxAE); tpISORM(iMaxISORM); tpHD(iMaxHD); NaN];
+contourName = {'IFORM'; 'Direct sampling'; 'ISORM'; 'Highest density'; 'All sea state'};
+maxResponse = [maxResponseIFORM; maxResponseDS; maxResponseISORM; maxResponseHD; allSeaStateResponse];
+maxResponseHs = [hsIFORM(iMaxIFORM); hsDS(iMaxDS); hsISORM(iMaxISORM); hsHD(iMaxHD); NaN];
+maxResponseTp = [tpIFORM(iMaxIFORM); tpDS(iMaxDS); tpISORM(iMaxISORM); tpHD(iMaxHD); NaN];
 T = table(contourName, maxResponse, maxResponseHs, maxResponseTp)
 
 
 figContourWithFailureSurface = figure('position', [100 100 500 450]);
 hold on
 %plot([tpIFORM tpIFORM(1)], [hsIFORM hsIFORM(1)], '-b');
-h(1) = plot([tpAE; tpAE(1)], [hsAE; hsAE(1)], '-k');
+h(1) = plot([tpDS; tpDS(1)], [hsDS; hsDS(1)], '-k');
 %plot([tpISORM tpISORM(1)], [hsISORM hsISORM(1)], '--b');
 h(2) = plot(tpHD, hsHD, '--k');
 %xlabel(PM.labels{2})
 xlabel('Spectral peak period (s)');
 ylabel(PM.labels{1})
 h(3) = plot(tpFailureSurface, hsFailureSurface, '-r');
-h(4) = plot(tpAE(iMaxAE), hsAE(iMaxAE), 'xk', 'linewidth', 2);
+h(4) = plot(tpDS(iMaxDS), hsDS(iMaxDS), 'xk', 'linewidth', 2);
 h(5) = plot(tpHD(iMaxHD), hsHD(iMaxHD), 'xk', 'linewidth', 2);
 
 xlim([0 20]);
 ylim([0 20]);
-lCell = {'50-year AE contour', '50-year HD contour', ...
+lCell = {'50-year DS contour', '50-year HD contour', ...
     'Failure surface, r_{SDOF}=19', 'Maximum response'};
 legend(h(1:4), lCell, 'location', 'northoutside', 'numcolumns', 2);
 legend box on
@@ -123,7 +126,7 @@ hold on
 xlabel('Spectral peak period (s)');
 ylabel(PM.labels{1})
 responseValues = [5 : 5 : 35];
-legendCell = cell(length(responseValues), 1)
+legendCell = cell(length(responseValues), 1);
 h = zeros(length(responseValues), 1);
 for i = 1 : length(responseValues)
     tp = [0 : 0.5 : 20];
