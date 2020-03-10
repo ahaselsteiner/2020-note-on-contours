@@ -6,7 +6,6 @@ function p = longTermResponseCdfE2(x)
 end
 
 function r  = rCdfTimesSeaStateDensity(x, hx, hy)
-    fjoint = directional_distribution_density_cartesian(hx, hy);
+    fjoint = directionalDistributionDensityCartesian(hx, hy);
     r  = directionalResponseCdf(x, hx, hy) .* fjoint;
-    %r = fjoint;
 end

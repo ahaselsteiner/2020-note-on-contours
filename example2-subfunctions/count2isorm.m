@@ -1,4 +1,4 @@
-function [xcont,ycont]=count2iform(x,y,count,P)
+function [xcont,ycont]=count2iform(x,y,count,alpha)
 
 % conditional CDF of y given x
 CDFygx=cumsum(count,1);
@@ -18,7 +18,7 @@ CDFx=sum(cumsum(count,2),1);
 CDFx=CDFx/max(CDFx);
 
 % contour points in normal space
-r=sqrt(chi2inv(P,2));
+r=sqrt(chi2inv(1 - alpha, 2));
 theta=(0:1:360)*pi/180;
 ux=r*cos(theta);
 uy=r*sin(theta);

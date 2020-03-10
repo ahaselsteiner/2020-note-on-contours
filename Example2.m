@@ -1,39 +1,41 @@
-clear
-%plotsettings
-%figurefolder='C:\Users\em604\OneDrive - University of Exeter\Extremes work\Papers\7 - Contours\figures';
-%load('FigureFormat_ACP_v3.mat');
-formatEPS.FontMode='auto';
-formatEPS.LockAxesTicks='on';
-formatEPS.LineMode='auto';
-formatEPS.Bounds='loose';
+% Script for Example 2 presented in "Marginal and Total Exceedance 
+% Probabilities for Environmental Contours" by Ed Mackay and Andreas
+% F. Haselsteiner.
 
-% range and resolution for density
-m=20;
-dx=0.02; %0.02 is sufficient for alpha = 1e-4
-x=-m:dx:m;
-y=-m:dx:m;
-dx=x(2)-x(1);
-dy=y(2)-y(1);
-[X,Y]=meshgrid(x,y);
+addpath('compute-hdc')
+addpath('example2-subfunctions')
 
-% calculate density and check integral
-fxy=directional_distribution_density_cartesian(X,Y);
-fxy(X==0&Y==0)=0;
-sum(fxy(:))*dx*dy-1 % error in numerical integration0
+% We are using a complex distribution with many parameter to describe 
+% directional significant wave height. Thus, we will use numerical 
+% integration instead of using the analytical expressions when we calculate
+% contours.
+% Define a grid at which the PDF will be evaluated:
+m = 20;
+dx = 0.02; %0.02 is sufficient for alpha = 1e-4
+hx = -m : dx : m;
+hy = -m : dx : m;
+dx = hx(2) - hx(1);
+dy = hy(2) - hy(1);
+[HX, HY] = meshgrid(hx, hy);
 
-% simulate random points for DS contour
-N=1e6;
-[theta,Hs]=directional_distribution_simulate(N);
-xr=Hs.*cos(theta);
-yr=Hs.*sin(theta);
+% Calculate density and check integral.
+fxy = directionalDistributionDensityCartesian(HX, HY);
+fxy(HX==0 & HY==0) = 0;
+err = sum(fxy(:)) * dx * dy - 1; % Error in numerical integration.
+disp(['Error in numerical integration: ' num2str(err)]);
 
-% calculate contours
+% Simulate random points for DS contour
+N = 1e6;
+[theta, Hs] = directionalDistributionSimulate(N);
+xr = Hs .* cos(theta);
+yr = Hs .* sin(theta);
+
+% Calculate contours.
 alpha = 1 / (1 * 365.25 * 24/3);
-P=1-alpha;
-[xcont_IF,ycont_IF]=count2iform(x,y,fxy,P);
-[xcont_IS,ycont_IS]=count2isorm(x,y,fxy,P);
-[xcont_HD,ycont_HD]=hdr2D(x,y,fxy,alpha);
-[xcont_DS, ycont_DS]=direct_sampling_contour(xr,yr,P,2);
+[xcont_IF, ycont_IF] = count2iform(hx, hy, fxy, alpha);
+[xcont_IS, ycont_IS] = count2isorm(hx, hy ,fxy, alpha);
+[xcont_HD, ycont_HD] = hdr2D(hx, hy, fxy, alpha);
+[xcont_DS, ycont_DS] = dsContour2D(xr, yr, alpha, 2);
 
 % Calculate the maximum responses along the contours.
 [maxResponseIF, i] = max(directionalResponse(xcont_IF, ycont_IF));
@@ -49,7 +51,7 @@ yMaxResponseHD = ycont_HD{1}(i);
 xMaxResponseDS = xcont_DS(i);
 yMaxResponseDS= ycont_DS(i);
 
-% transform to Hs-theta
+% Transform to Hs-theta.
 Hs_IF=sqrt(xcont_IF.^2 + ycont_IF.^2);
 Hs_IS=sqrt(xcont_IS.^2 + ycont_IS.^2);
 Hs_DS=sqrt(xcont_DS.^2 + ycont_DS.^2);
@@ -79,14 +81,6 @@ thetaMaxResponseHD = atan2(yMaxResponseHD, xMaxResponseHD);
 % Compute true response.
 allSeaStateResponse = allSeaStateApproachE2(alpha);
 
-% figure
-% hold on
-% % scatter(xr,yr)
-% % contour(x,y,log10(fxy),-6:0)
-% plot(xcont_IF,ycont_IF,'r')
-% plot(xcont_IS,ycont_IS,'g')
-% plot(xcont_DS,ycont_DS,'k')
-% plot(xcont_HD{1},ycont_HD{1},'b')
 
 figure('position',[-800,300,400,400])
 hold on; grid on
@@ -109,20 +103,19 @@ hs = sqrt(rcx.^2 + rcy.^2);
 waveAngle = atan2d(rcy, rcx);
 h(5) = polarplot(deg2rad([waveAngle; waveAngle(1)]), [hs; hs(1)], '-r', 'linewidth', 2);
 
-cross_line_width = 1.5;
-h(6) = polarplot(thetaMaxResponseIF, HsMaxResponseIF, '+k', 'linewidth', cross_line_width);
-h(7) = polarplot(thetaMaxResponseIS, HsMaxResponseIS, '+k', 'linewidth', cross_line_width);
-h(8) = polarplot(thetaMaxResponseDS, HsMaxResponseDS, '+k', 'linewidth', cross_line_width);
-h(9) = polarplot(thetaMaxResponseHD, HsMaxResponseHD, '+k', 'linewidth', cross_line_width);
+cross_line_width = 1;
+h(6) = polarplot(thetaMaxResponseIF, HsMaxResponseIF, 'xb', 'linewidth', cross_line_width);
+h(7) = polarplot(thetaMaxResponseIS, HsMaxResponseIS, 'xk', 'linewidth', cross_line_width);
+h(8) = polarplot(thetaMaxResponseDS, HsMaxResponseDS, 'xk', 'linewidth', cross_line_width);
+h(9) = polarplot(thetaMaxResponseHD, HsMaxResponseHD, 'xb', 'linewidth', cross_line_width);
 
-title('$H_s$ [m] vs. $\theta$ [deg]')
+title('$H_s$ [m] vs. $\theta$ [deg]', 'interpreter', 'latex')
 ax=gca;
 set(ax,'TickLabelInterpreter','latex')
 set(ax,'RTick',0:2:12)
 L=legend(h([1,2,3,4,5,6]),'IFORM','ISORM','DS','HD', 'Failure surface', 'Max response');
 set( L, 'Box','off')
 set(L,'Position',[0.8 0.07 0.18 0.13])
-%hgexport(gcf, [figurefolder '\DirectionCont.eps'], formatEPS);
 
 
 pfIF = (1 - longTermResponseCdfE2(maxResponseIF)) / alpha;

@@ -1,4 +1,4 @@
-function [xcont,ycont]=count2iform(x,y,count,P)
+function [xcont,ycont]=count2iform(x,y,count,alpha)
 
 % conditional CDF of y given x
 CDFygx=cumsum(count,1);
@@ -18,7 +18,7 @@ CDFx=sum(cumsum(count,2),1);
 CDFx=CDFx/max(CDFx);
 
 % contour points in normal space
-r=norminv(P);
+r=norminv(1 - alpha);
 theta=(0:1:360)*pi/180;
 ux=r*cos(theta);
 uy=r*sin(theta);
@@ -31,18 +31,11 @@ xcont=interp1(CDFx,x(inds),Px,'pchip');
 
 ycont=0*xcont;
 for i=1:length(uy)
-%     disp(i)
     if xcont(i)<min(xi)
         condCDFy=CDFygx(:,1);
     else
         condCDFy=interp2(xi,y,CDFygx,xcont(i),y);
     end
-%     [condCDFy,inds]=unique(condCDFy);
-%     yi=y(inds);
-%     if any(isnan(yi)) || any(isnan(condCDFy)) || any(isinf(yi)) || any(isinf(condCDFy))
-%         error('got')
-%     end
-%     ycont(i)=interp1(condCDFy,yi,Py(i),'pchip');
     i0=find(condCDFy<Py(i),1,'last');
     i1=find(condCDFy>Py(i),1,'first');
     if isempty(i0) 
