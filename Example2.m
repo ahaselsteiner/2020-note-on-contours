@@ -83,7 +83,7 @@ thetaMaxRespHD = atan2(yMaxResponseHD, xMaxResponseHD);
 % Compute true response.
 allSeaStateResponse = allSeaStateApproachE2(ALPHA);
 
-figure('position',[0,0,800,800])
+figure('position',[0, 0, 600, 600])
 h = zeros(9, 1);
 h(1) = polarplot(theta_IF,Hs_IF, 'b-','linewidth', 1); hold on
 h(2) = polarplot(theta_IS,Hs_IS, 'k-','linewidth', 1);
