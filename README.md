@@ -1,6 +1,7 @@
-# Repo for 'Marginal return levels from environmental contours'
+# Marginal return levels from environmental contours
 
-This is the repository for the note 'Marginal return levels from environmental contours'
+This is the repository for the publication 'Marginal return levels from 
+environmental contours' by Ed Mackay and Andreas F. Haselsteiner.
 
 ## Download and use the repository
 To download this repository and its submodules use
