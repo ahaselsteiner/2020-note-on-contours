@@ -10,7 +10,7 @@ git clone --recurse-submodules https://github.com/ahaselsteiner/2020-note-on-con
 
 It holds two main Matlab scripts:
 * `Example1.m` reproduces the analyis of the sea state example.
-* `Example2.m` reproduces the analysis of the directional conditions exmaple.
+* `Example2.m` reproduces the analysis of the directional design conditions example.
 
 Further it holds three subfolder containing multiple files:
 * `compute-hdc` is a software package to compute environmental contours.
