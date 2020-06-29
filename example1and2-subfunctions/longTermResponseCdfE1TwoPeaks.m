@@ -1,8 +1,4 @@
-function r = allSeaStateApproachE1NumericIntegration(alpha)
-    r = fzero(@(x)responseCdf(x) - (1 - alpha), 20);
-end
-
-function p = responseCdf(x)
+function p = longTermResponseCdfE1TwoPeaks(x)
     p = integral2(@(hs, tz)rCdfTimesSeaStateDensity(x, hs, tz), 0, 40, 0, 40);
 end
 
@@ -32,5 +28,5 @@ function r  = rCdfTimesSeaStateDensity(x, hs, tz)
 
     tztpCoeff = 1.2796;
     tp =  tztpCoeff * tz;
-    r  = ross2020ResponseCdf(x, hs, tp) .* fjoint;
+    r  = responseTwoPeaksCdf(x, hs, tp) .* fjoint;
 end

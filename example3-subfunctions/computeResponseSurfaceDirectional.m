@@ -1,11 +1,13 @@
-function [rcx, rcy] = computeResponseSurfaceDirectional(r)
+function [rcx, rcy] = computeResponseSurfaceDirectional(r, phi, a, b)    
+    phi
+    a
+    b
     hxPrime = -15 : 0.01 : 15;
     hxPrime = hxPrime';
     hyPrime1 = nan(length(hxPrime), 1);
     hyPrime2 = nan(length(hxPrime), 1);
     for i = 1 : length(hxPrime)
-        a = 1.3;
-        b = 5;
+
         x = hxPrime(i);
         y = sqrt((r^2 - a*x^2) / b);
         if isreal(y)
@@ -15,11 +17,10 @@ function [rcx, rcy] = computeResponseSurfaceDirectional(r)
     end
 
     % Rotate the ellipse.
-    theta = 310 / 180 * pi;
     rcxPrime = [hxPrime; flip(hxPrime)];
     rcyPrime = [hyPrime1; flip(hyPrime2)];
-    rcx = rcxPrime * cos(theta) - rcyPrime * sin (theta);
-    rcy = rcxPrime * sin(theta) + rcyPrime * cos(theta);
+    rcx = rcxPrime * cos(phi) - rcyPrime * sin (phi);
+    rcy = rcxPrime * sin(phi) + rcyPrime * cos(phi);
 
 
     rcx = rcx(~isnan(rcy));
