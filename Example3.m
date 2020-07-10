@@ -108,37 +108,28 @@ thetaMaxRespDS = atan2(yMaxResponseDS, xMaxResponseDS);
 thetaMaxRespHD = atan2(yMaxResponseHD, xMaxResponseHD);
 
 % Compute true response.
-allSeaStateResponse = allSeaStateApproachE2(ALPHA, phi, a, b);
+allSeaStateResponse = allSeaStateApproachE3(ALPHA, phi, a, b);
 
-figDirectional = figure('position',[0, 0, 1200, 600])
+figDirectionalContours = figure('position',[0, 0, 1200, 600]);
 subplot(1, 2, 1);
-h = zeros(9, 1);
+h = zeros(5, 1);
 h(1) = polarplot(theta_IF,Hs_IF, 'b-','linewidth', 1); hold on
 h(2) = polarplot(theta_IS,Hs_IS, 'k-','linewidth', 1);
 h(3) = polarplot(theta_DS,Hs_DS, 'k--','linewidth', 1);
 h(4) = polarplot(theta_HD,Hs_HD, 'b--','linewidth', 1);
-
-[rcx, rcy] = computeResponseSurfaceDirectional(allSeaStateResponse, ...
-    phi, a, b);
-hs = sqrt(rcx.^2 + rcy.^2);
-waveAngle = atan2d(rcy, rcx);
-h(5) = polarplot(deg2rad([waveAngle; waveAngle(1)]), [hs; hs(1)], '-r', 'linewidth', 2);
-
-h(6) = polarplot(thetaMaxRespIF, HsMaxResponseIF, 'xb');
-h(7) = polarplot(thetaMaxRespIS, HsMaxResponseIS, 'xk');
-h(8) = polarplot(thetaMaxRespDS, HsMaxResponseDS, 'xk');
-h(9) = polarplot(thetaMaxRespHD, HsMaxResponseHD, 'xb');
-
+hsOmni(1 : 361) = quantile(Hs, 1 - ALPHA);
+angleOmni(1 : 361) = [0 : 1 : 360];
+h(5) = polarplot(deg2rad(angleOmni), hsOmni, '-r', 'linewidth', 2);
 title('$H_s$ [m] vs. $\theta$ [deg]', 'interpreter', 'latex')
 ax = gca;
 set(ax,'TickLabelInterpreter', 'latex')
 set(ax,'RTick',0 : 2 : 12)
-L = legend(h([1,2,3,4,5,6]), ...
-    'IFORM', 'ISORM', 'DS', 'HD', 'Failure surface', 'Max response');
+L = legend(h([1,2,3,4,5]), ...
+    'IFORM', 'ISORM', 'DS', 'HD', 'Omni');
 set(L, 'Box', 'off')
 set(L, 'fontsize', 6)
 set(L, 'fontweight', 'bold')
-set(L,'Position', [0.4 0.8 0.18 0.13])
+set(L,'Position', [0.4 0.1 0.18 0.13])
 
 subplot(1, 2, 2);
 decimalsToRound = 1;
@@ -148,29 +139,59 @@ yrRound = round(yr, decimalsToRound);
 dotsRound = [xrRound, yrRound];
 [C,ia,ic] = unique(dotsRound, 'rows');
 uniqueDots = dots(ia, :);
-plot(uniqueDots(:, 1), uniqueDots(:, 2), '.k', 'markersize', 10);
+h = zeros(3, 1);
+uniqueHs = sqrt(uniqueDots(:, 1).^2 + uniqueDots(:, 2).^2);
+uniqueTheta = atan2(uniqueDots(:, 2), uniqueDots(:, 1));
+h(1) = polarplot(uniqueTheta, uniqueHs, '.k', 'markersize', 10, 'color', [0.5 0.5 0.5]);
 hold on
-plot(xcont_IFxIy, ycont_IFxIy, 'color', [1 0.7 0], 'linewidth', 2);
-plot(xcont_IF, ycont_IF, 'color', [0.3 0.3 1], 'linewidth', 2);
-box off
-xlabel('hx (m)');
-ylabel('hy (m)');
-axis equal
-xticks([-10:5:10]);
-yticks([-10:5:10]);
-xlim([-10 11])
-ylim([-10 10])
-L = legend({'Simulated sea states', 'IFORM H_y|H_x', 'IFORM H_x|H_y'});
+h(2) = polarplot(theta_IF, Hs_IF, 'color', [0.3 0.3 1], 'linewidth', 2);
+h(3) = polarplot(theta_IFxIy, Hs_IFxIy, 'color', [0 1 0], 'linewidth', 2);
+title('$H_s$ [m] vs. $\theta$ [deg]', 'interpreter', 'latex')
+ax = gca;
+set(ax,'TickLabelInterpreter', 'latex')
+set(ax,'RTick',0 : 2 : 12)
+L = legend({'Simulated', 'H_y|H_x', 'H_x|H_y'});
+set(L, 'Box', 'off')
 set(L, 'fontsize', 6)
 set(L, 'fontweight', 'bold')
-set(L, 'box', 'off'); 
+set(L,'Position', [0.8 0.1 0.18 0.13])
+
+figDirectionalResponse = figure('position',[0, 0, 800, 600]);
+h = zeros(9, 1);
+h(1) = polarplot(theta_IF,Hs_IF, 'b-','linewidth', 1); hold on
+h(2) = polarplot(theta_IS,Hs_IS, 'k-','linewidth', 1);
+h(3) = polarplot(theta_DS,Hs_DS, 'k--','linewidth', 1);
+h(4) = polarplot(theta_HD,Hs_HD, 'b--','linewidth', 1);
+phi = RF_PARAMS_1(1);
+a = RF_PARAMS_1(2);
+b = RF_PARAMS_1(3);
+[rcx, rcy] = computeResponseSurfaceDirectional(allSeaStateResponse, ...
+    phi, a, b);
+hs = sqrt(rcx.^2 + rcy.^2);
+waveAngle = atan2d(rcy, rcx);
+h(5) = polarplot(deg2rad([waveAngle; waveAngle(1)]), [hs; hs(1)], '-r', 'linewidth', 2);
+h(6) = polarplot(thetaMaxRespIF, HsMaxResponseIF, 'xb');
+h(7) = polarplot(thetaMaxRespIS, HsMaxResponseIS, 'xk');
+h(8) = polarplot(thetaMaxRespDS, HsMaxResponseDS, 'xk');
+h(9) = polarplot(thetaMaxRespHD, HsMaxResponseHD, 'xb');
+title('$H_s$ [m] vs. $\theta$ [deg]', 'interpreter', 'latex')
+ax = gca;
+set(ax,'TickLabelInterpreter', 'latex')
+set(ax,'RTick',0 : 2 : 12)
+L = legend(h([1,2,3,4,5,6]), ...
+    'IFORM', 'ISORM', 'DS', 'HD', 'Failure surface', 'Max response');
+set(L, 'Box', 'off')
+set(L, 'fontsize', 6)
+set(L, 'fontweight', 'bold')
+set(L,'Position', [0.8 0.1 0.18 0.13])
+
 
 % Compute probability of failures if structures were designed such that
 % their capacity were exactly the maximum response of the contour.
-pfIF = (1 - longTermResponseCdfE2(maxResponseIF, phi, a, b)) / ALPHA;
-pfDS = (1 - longTermResponseCdfE2(maxResponseDS, phi, a, b)) / ALPHA;
-pfIS = (1 - longTermResponseCdfE2(maxResponseIS, phi, a, b)) / ALPHA;
-pfHD = (1 - longTermResponseCdfE2(maxResponseHD, phi, a, b)) / ALPHA;
+pfIF = (1 - longTermResponseCdfE3(maxResponseIF, phi, a, b)) / ALPHA;
+pfDS = (1 - longTermResponseCdfE3(maxResponseDS, phi, a, b)) / ALPHA;
+pfIS = (1 - longTermResponseCdfE3(maxResponseIS, phi, a, b)) / ALPHA;
+pfHD = (1 - longTermResponseCdfE3(maxResponseHD, phi, a, b)) / ALPHA;
 
 contourName =   {'IFORM';         'DS contour';    'ISORM';         'HD contour';    'All sea state'};
 maxResponse =   [maxResponseIF;   maxResponseDS;   maxResponseIS;   maxResponseHD;   allSeaStateResponse];
@@ -239,47 +260,17 @@ thetaMaxRespDS = atan2(yMaxResponseDS, xMaxResponseDS);
 thetaMaxRespHD = atan2(yMaxResponseHD, xMaxResponseHD);
 
 % Compute true response.
-allSeaStateResponse = allSeaStateApproachE2(ALPHA, phi, a, b);
-
-figOmni = figure('position',[0, 0, 1200, 600])
-h = zeros(9, 1);
-h(1) = polarplot(theta_IF,Hs_IF, 'b-','linewidth', 1); hold on
-h(2) = polarplot(theta_IS,Hs_IS, 'k-','linewidth', 1);
-h(3) = polarplot(theta_DS,Hs_DS, 'k--','linewidth', 1);
-h(4) = polarplot(theta_HD,Hs_HD, 'b--','linewidth', 1);
-
-[rcx, rcy] = computeResponseSurfaceDirectional(allSeaStateResponse, ...
-    phi, a, b);
-hs = sqrt(rcx.^2 + rcy.^2);
-waveAngle = atan2d(rcy, rcx);
-h(5) = polarplot(deg2rad([waveAngle; waveAngle(1)]), [hs; hs(1)], '-r', 'linewidth', 2);
-
-h(6) = polarplot(thetaMaxRespIF, HsMaxResponseIF, 'xb');
-h(7) = polarplot(thetaMaxRespIS, HsMaxResponseIS, 'xk');
-h(8) = polarplot(thetaMaxRespDS, HsMaxResponseDS, 'xk');
-h(9) = polarplot(thetaMaxRespHD, HsMaxResponseHD, 'xb');
-
-title('$H_s$ [m] vs. $\theta$ [deg]', 'interpreter', 'latex')
-ax = gca;
-set(ax,'TickLabelInterpreter', 'latex')
-set(ax,'RTick',0 : 2 : 12)
-L = legend(h([1,2,3,4,5,6]), ...
-    'IFORM', 'ISORM', 'DS', 'HD', 'Failure surface', 'Max response');
-set(L, 'Box', 'off')
-set(L, 'fontsize', 6)
-set(L, 'fontweight', 'bold')
-set(L,'Position', [0.4 0.8 0.18 0.13])
-
+allSeaStateResponseOmni = allSeaStateApproachE3(ALPHA, phi, a, b);
 
 % Compute probability of failures if structures were designed such that
 % their capacity were exactly the maximum response of the contour.
-pfIF = (1 - longTermResponseCdfE2(maxResponseIF, phi, a, b)) / ALPHA;
-pfDS = (1 - longTermResponseCdfE2(maxResponseDS, phi, a, b)) / ALPHA;
-pfIS = (1 - longTermResponseCdfE2(maxResponseIS, phi, a, b)) / ALPHA;
-pfHD = (1 - longTermResponseCdfE2(maxResponseHD, phi, a, b)) / ALPHA;
+pfIF = (1 - longTermResponseCdfE3(maxResponseIF, phi, a, b)) / ALPHA;
+pfDS = (1 - longTermResponseCdfE3(maxResponseDS, phi, a, b)) / ALPHA;
+pfIS = (1 - longTermResponseCdfE3(maxResponseIS, phi, a, b)) / ALPHA;
+pfHD = (1 - longTermResponseCdfE3(maxResponseHD, phi, a, b)) / ALPHA;
 
 contourName =   {'IFORM';         'DS contour';    'ISORM';         'HD contour';    'All sea state'};
-maxResponse =   [maxResponseIF;   maxResponseDS;   maxResponseIS;   maxResponseHD;   allSeaStateResponse];
+maxResponse =   [maxResponseIF;   maxResponseDS;   maxResponseIS;   maxResponseHD;   allSeaStateResponseOmni];
 maxResponseHs = [HsMaxResponseIF; HsMaxResponseDS; HsMaxResponseIS; HsMaxResponseHD; NaN];
 maxRespTheta =  [thetaMaxRespIF;  thetaMaxRespDS;  thetaMaxRespIS;  thetaMaxRespHD;  NaN];
 probOfFailure = [pfIF;            pfDS;            pfIS;            pfHD;            1];

@@ -1,4 +1,4 @@
-function p = longTermResponseCdfE2(x, phi, a, b)
+function p = longTermResponseCdfE3(x, phi, a, b)
     minInt = -30;
     maxInt = 30;
     p = integral2(@(hx, hy)rCdfTimesSeaStateDensity(x, hx, hy, phi, a, b), ...

@@ -1,7 +1,4 @@
 function [rcx, rcy] = computeResponseSurfaceDirectional(r, phi, a, b)    
-    phi
-    a
-    b
     hxPrime = -15 : 0.01 : 15;
     hxPrime = hxPrime';
     hyPrime1 = nan(length(hxPrime), 1);
