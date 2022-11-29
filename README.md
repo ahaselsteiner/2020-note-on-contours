@@ -1,4 +1,4 @@
-# Marginal return levels from environmental contours
+# Marginal and total exceedance probabilities of environmental contours
 
 This is the repository for the publication 'Marginal and Total Exceedance 
 Probabilities for Environmental Contours' by Ed Mackay and Andreas F. 
