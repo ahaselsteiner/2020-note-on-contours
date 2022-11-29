@@ -2,7 +2,7 @@
 
 This is the repository for the publication 'Marginal and Total Exceedance 
 Probabilities for Environmental Contours' by Ed Mackay and Andreas F. 
-Haselsteiner.
+Haselsteiner. https://doi.org/10.1016/j.marstruc.2020.102863
 
 ## Download and use the repository
 To download this repository and its submodules use
